@@ -3,17 +3,16 @@ name: Node.js CI
 on: [push]
 
 jobs:
-  build:
+    build:
+        runs-on: self-hosted
 
-    runs-on: self-hosted
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-        deploy-branch: master
-    - run: npm install
-    - run: npm start
-    #- run: pm2 restart zyro-discord
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  deploy-branch: master
+            - run: npm install
+            - run: npm start
+            - run: pm2 restart flappy-api
