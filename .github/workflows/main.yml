@@ -14,5 +14,4 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   deploy-branch: master
             - run: npm install
-            - run: npm start
             - run: pm2 restart flappy-api
