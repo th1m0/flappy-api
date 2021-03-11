@@ -3,8 +3,6 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
 import { config } from "dotenv";
-import mysql from "./databases/mysql";
-import mongodb from "./databases/mongo";
 config();
 
 import middlewares from "./middlewares";
@@ -15,11 +13,6 @@ const app = express();
 /**
  * init, preloading databases and some utils if they need preloading
  */
-(async () => {
-	mysql();
-	await mongodb();
-})();
-
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors());
