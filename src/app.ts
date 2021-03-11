@@ -6,7 +6,6 @@ import { config } from "dotenv";
 config();
 
 import middlewares from "./middlewares";
-import api from "./api";
 
 const app = express();
 
