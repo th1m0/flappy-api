@@ -5,6 +5,8 @@ import cors from "cors";
 import { config } from "dotenv";
 config();
 
+import api from "./api";
+
 import middlewares from "./middlewares";
 
 const app = express();
@@ -23,7 +25,7 @@ app.get("/", (req, res) => {
 	});
 });
 
-// app.use("/api/v1", api);
+app.use("/api/v1", api);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
