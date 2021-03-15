@@ -1,0 +1,14 @@
+{
+	"apps": [
+		{
+			"name": "flappy-api",
+			"cwd": ".",
+			"script": "/usr/bin/npm",
+			"args": ["start"],
+			"node_args": [],
+			"log_date_format": "YYYY-MM-DD HH:mm:ss Z",
+			"exec_interpreter": "",
+			"exec_mode": "fork"
+		}
+	]
+}
