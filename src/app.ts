@@ -12,7 +12,7 @@ import middlewares from "./middlewares";
 
 const app = express();
 (() => {
-	console.log("Loading database");
+	console.log("[DATABASE]", "Loading database");
 	mongodb("mongodb://localhost/flappy");
 })();
 
