@@ -11,12 +11,11 @@ import mongodb from "./database";
 import middlewares from "./middlewares";
 
 const app = express();
+(() => {
+	console.log("Loading database");
+	mongodb("mongodb://localhost/flappy");
+})();
 
-/**
- * init, preloading databases and some utils if they need preloading
- */
-
-mongodb("mongodb://localhost/flappy");
 app.use(
 	rateLimit({
 		windowMs: 60 * 1000,
