@@ -11,20 +11,29 @@ import mongodb from "./database";
 import middlewares from "./middlewares";
 
 const app = express();
+
+// Connecting to the database in sync
 (() => {
 	console.log("[DATABASE]", "Loading database");
 	mongodb("mongodb://localhost/flappy");
 })();
 
+/**
+ * RATE LIMITING
+ * 100 requests per 60 seconds.
+ */
 app.use(
 	rateLimit({
 		windowMs: 60 * 1000,
 		max: 100,
 		message:
-			"You have been rate limitted! you can only do 100 requests per minute.",
+			"You have been rate limitted! You can only do 100 requests per minute.",
 		statusCode: 429,
 	})
 );
+/**
+ * Adding logging and securrity
+ */
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors());
@@ -36,8 +45,10 @@ app.get("/", (req, res) => {
 	});
 });
 
+// adding core rout.
 app.use("/api/v1", api);
 
+// adding middlewares
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
 

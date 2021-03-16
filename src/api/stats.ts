@@ -17,7 +17,7 @@ interface Data {
 	insertedDate: number;
 }
 
-const shouldUPdate = false;
+let shouldUPdate = false;
 
 const cache: CacheInterface = {
 	data: null,
@@ -37,19 +37,21 @@ router.get("/", (req: Request, res: Response) => {
 		cache.lastUpdated == null ||
 		new Date().getTime() - cache.lastUpdated > updateTime
 	) {
-		stats.find({}).then((data: Document<any, {}>[]) => {
-			cache.data = data;
+		stats.find({}).then((documentData: Document<any, {}>[]) => {
+			shouldUPdate = false;
+			cache.data = documentData;
 			cache.lastUpdated = new Date().getTime();
+			const data: Data[] = handleData(documentData);
 			res.json({
-				"YAY!": "This works!!",
-				cache,
+				data,
+				lastUpdated: cache.lastUpdated,
 			});
 		});
-		// shouldUPdate = true;
 	} else {
+		const data = handleData(cache.data);
 		res.json({
-			"GOT IT FROM THE CACHE!!": "WOOOOOOOOOO",
-			cache,
+			data,
+			lastUpdated: cache.lastUpdated,
 		});
 	}
 });
@@ -62,9 +64,11 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
 	stats
 		.create(req.body)
 		.then(() => {
+			shouldUPdate = true;
 			res.status(200);
 			res.json({
-				status: "Everything went ok!",
+				status: "ok",
+				data: req.body,
 			});
 		})
 		.catch((e) => {
@@ -90,6 +94,7 @@ router.get(
 			stats
 				.find({})
 				.then((DocumentData) => {
+					shouldUPdate = false;
 					cache.data = DocumentData;
 					cache.lastUpdated = new Date().getTime();
 					let data: Data[] = handleData(DocumentData);
