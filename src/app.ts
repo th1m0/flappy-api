@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 import { config } from "dotenv";
 config();
 
@@ -16,7 +17,15 @@ const app = express();
  */
 
 mongodb("mongodb://localhost/flappy");
-
+app.use(
+	rateLimit({
+		windowMs: 60 * 1000,
+		max: 100,
+		message:
+			"You have been rate limitted! you can only do 100 requests per minute.",
+		statusCode: 429,
+	})
+);
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors());
