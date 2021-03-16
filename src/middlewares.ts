@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-const env: string = null;
+const env: string = "production";
 
 function notFound(req: Request, res: Response, next: NextFunction) {
 	res.status(404);
