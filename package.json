@@ -7,11 +7,10 @@
 		"start": "ts-node src/index.ts",
 		"dev": "nodemon src/index.ts",
 		"lint": "eslint --fix src",
-		"test": "mocha --exit",
 		"prebuild": "tslint -c tslint.json -p tsconfig.json --fix"
 	},
 	"keywords": [],
-	"author": "CJ R. <cj@null.computer> (https://w3cj.now.sh)",
+	"author": "Thimo Sietsma <thimosietsma@gmail.com>",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/w3cj/express-api-starter.git"
@@ -46,6 +45,7 @@
 		"mocha": "^8.2.1",
 		"nodemon": "^2.0.7",
 		"supertest": "^6.1.3",
-		"tslint": "^6.1.3"
+		"tslint": "^6.1.3",
+		"typescript": "^4.2.3"
 	}
 }

@@ -7,19 +7,19 @@ import express, {
 } from "express";
 import { Document } from "mongoose";
 import stats from "../database/models/stats";
-interface cacheInterface {
+interface CacheInterface {
 	data: Document<any, {}>[] | null;
 	lastUpdated: number | null;
 }
-interface data {
+interface Data {
 	username: string;
 	score: number;
 	insertedDate: number;
 }
 
-let shouldUPdate = false;
+const shouldUPdate = false;
 
-const cache: cacheInterface = {
+const cache: CacheInterface = {
 	data: null,
 	lastUpdated: null,
 };
@@ -37,26 +37,26 @@ router.get("/", (req: Request, res: Response) => {
 		cache.lastUpdated == null ||
 		new Date().getTime() - cache.lastUpdated > updateTime
 	) {
-		stats.find({}).then((data) => {
+		stats.find({}).then((data: Document<any, {}>[]) => {
 			cache.data = data;
 			cache.lastUpdated = new Date().getTime();
 			res.json({
 				"YAY!": "This works!!",
-				cache: cache,
+				cache,
 			});
 		});
 		// shouldUPdate = true;
 	} else {
 		res.json({
 			"GOT IT FROM THE CACHE!!": "WOOOOOOOOOO",
-			cache: cache,
+			cache,
 		});
 	}
 });
 
 router.post("/", (req: Request, res: Response, next: NextFunction) => {
 	const ip: string | string[] = getIp(req);
-	const data = req.body;
+	const data: any = req.body;
 	data.insertedDate = new Date().getTime();
 	data.ipAddress = ip.toString();
 	stats
@@ -77,7 +77,7 @@ router.get(
 	"/top/:amount",
 	(req: Request, res: Response, next: NextFunction) => {
 		const { amount } = req.params;
-		const num = parseInt(amount);
+		const num: number = parseInt(amount, 36);
 		if (isNaN(num)) {
 			next(new TypeError("Id needs to be a valid number."));
 			return;
@@ -92,7 +92,7 @@ router.get(
 				.then((DocumentData) => {
 					cache.data = DocumentData;
 					cache.lastUpdated = new Date().getTime();
-					let data = handleData(DocumentData);
+					let data: Data[] = handleData(DocumentData);
 					data.sort((a, b) => {
 						return b.score - a.score;
 					});
@@ -113,7 +113,7 @@ router.get(
 					next(e);
 				});
 		} else {
-			let data = handleData(cache.data);
+			let data: Data[] = handleData(cache.data);
 			data.sort((a, b) => {
 				const c: number = a.score;
 				const d: number = b.score;
@@ -136,8 +136,8 @@ router.get(
 );
 
 const handleData = (data: Document<any, {}>[]) => {
-	const newData: data[] = [];
-	data.map((d) => {
+	const newData: Data[] = [];
+	data.map((d: Document<any, {}>) => {
 		newData.push({
 			username: d.get("username"),
 			score: d.get("score"),

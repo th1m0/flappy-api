@@ -18,7 +18,7 @@ function errorHandler(
 	res.status(statusCode);
 	res.json({
 		message: err.message,
-		stack: env == "production" ? "🥞" : err.stack,
+		stack: env === "production" ? "🥞" : err.stack,
 	});
 }
 
