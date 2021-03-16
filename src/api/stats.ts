@@ -1,12 +1,16 @@
-import express, { NextFunction, request, Request, Response } from "express";
+import express, {
+	NextFunction,
+	request,
+	Request,
+	Response,
+	Router,
+} from "express";
 import { Document } from "mongoose";
 import stats from "../database/models/stats";
-
 interface cacheInterface {
 	data: Document<any, {}>[] | null;
 	lastUpdated: number | null;
 }
-
 interface data {
 	username: string;
 	score: number;
@@ -19,13 +23,13 @@ const cache: cacheInterface = {
 	data: null,
 	lastUpdated: null,
 };
-const updateTime = 60 * 5 * 1000; // every 5 minutes
-const router = express.Router();
+
+const updateTime: number = 5 * 60 * 1000; // every 5 minutes
+const router: Router = express.Router();
 
 const getIp = (req: Request) => {
 	return req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 };
-// GET LEADER BOARD (param is amount.)
 router.get("/", (req: Request, res: Response) => {
 	// const ip: string | string[] = getIp(req);
 	if (
@@ -90,9 +94,7 @@ router.get(
 					cache.lastUpdated = new Date().getTime();
 					let data = handleData(DocumentData);
 					data.sort((a, b) => {
-						const c: number = a.score;
-						const d: number = b.score;
-						return d - c;
+						return b.score - a.score;
 					});
 					if (data.length < num) {
 						res.json({
