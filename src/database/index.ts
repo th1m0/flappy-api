@@ -1,13 +1,18 @@
 import mongoose from "mongoose";
 export default async (uri: string) => {
-	try {
-		await mongoose.connect(uri, {
+	mongoose
+		.connect(uri, {
 			useUnifiedTopology: true,
 			useNewUrlParser: true,
-		});
-		mongoose.set("useCreateIndex", true);
-		console.log("[DATABASE]", "Connected to the database.");
-	} catch (error) {
-		console.error("Can't connect to the database.", error);
-	}
+		})
+		.finally(() => {
+			console.log("[DATABASE] database has succefully been loaded.");
+		})
+		.catch((error: Error) =>
+			console.error(
+				"[DATABASE] something went wrong loading the database",
+				error
+			)
+		);
+	mongoose.set("useCreateIndex", true);
 };
