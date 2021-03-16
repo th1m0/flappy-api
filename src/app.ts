@@ -6,7 +6,7 @@ import { config } from "dotenv";
 config();
 
 import api from "./api";
-
+import mongodb from "./database";
 import middlewares from "./middlewares";
 
 const app = express();
@@ -14,6 +14,9 @@ const app = express();
 /**
  * init, preloading databases and some utils if they need preloading
  */
+
+mongodb("mongodb://localhost/flappy");
+
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors());
