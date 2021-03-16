@@ -11,9 +11,9 @@ import mongodb from "./database";
 import middlewares from "./middlewares";
 
 const app = express();
-(() => {
+(async () => {
 	console.log("[DATABASE]", "Loading database");
-	mongodb("mongodb://localhost/flappy");
+	await mongodb("mongodb://localhost/flappy");
 })();
 
 app.use(
