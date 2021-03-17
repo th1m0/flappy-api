@@ -1,10 +1,4 @@
-import express, {
-	NextFunction,
-	request,
-	Request,
-	Response,
-	Router,
-} from "express";
+import express, { NextFunction, request, Request, Response, Router } from "express";
 import { Document } from "mongoose";
 import stats from "../database/models/stats";
 interface CacheInterface {
@@ -32,11 +26,7 @@ const getIp = (req: Request) => {
 };
 router.get("/", (req: Request, res: Response) => {
 	// const ip: string | string[] = getIp(req);
-	if (
-		shouldUPdate ||
-		cache.lastUpdated == null ||
-		new Date().getTime() - cache.lastUpdated > updateTime
-	) {
+	if (shouldUPdate || cache.lastUpdated == null || new Date().getTime() - cache.lastUpdated > updateTime) {
 		stats.find({}).then((documentData: Document<any, {}>[]) => {
 			shouldUPdate = false;
 			cache.data = documentData;
@@ -71,74 +61,67 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
 				data: req.body,
 			});
 		})
-		.catch((e) => {
+		.catch(e => {
 			res.status(400);
 			next(e);
 		});
 });
 
-router.get(
-	"/top/:amount",
-	(req: Request, res: Response, next: NextFunction) => {
-		const { amount } = req.params;
-		const num: number = parseInt(amount, 36);
-		if (isNaN(num)) {
-			next(new TypeError("Id needs to be a valid number."));
-			return;
-		}
-		if (
-			shouldUPdate ||
-			cache.lastUpdated == null ||
-			new Date().getTime() - cache.lastUpdated > updateTime
-		) {
-			stats
-				.find({})
-				.then((DocumentData) => {
-					shouldUPdate = false;
-					cache.data = DocumentData;
-					cache.lastUpdated = new Date().getTime();
-					let data: Data[] = handleData(DocumentData);
-					data.sort((a, b) => {
-						return b.score - a.score;
+router.get("/top/:amount", (req: Request, res: Response, next: NextFunction) => {
+	const { amount } = req.params;
+	const num: number = parseInt(amount, 36);
+	if (isNaN(num)) {
+		next(new TypeError("Id needs to be a valid number."));
+		return;
+	}
+	if (shouldUPdate || cache.lastUpdated == null || new Date().getTime() - cache.lastUpdated > updateTime) {
+		stats
+			.find({})
+			.then(DocumentData => {
+				shouldUPdate = false;
+				cache.data = DocumentData;
+				cache.lastUpdated = new Date().getTime();
+				let data: Data[] = handleData(DocumentData);
+				data.sort((a, b) => {
+					return b.score - a.score;
+				});
+				if (data.length < num) {
+					res.json({
+						amount: data.length,
+						data,
 					});
-					if (data.length < num) {
-						res.json({
-							amount: data.length,
-							data,
-						});
-					} else {
-						data = data.slice(0, num);
-						res.json({
-							amount: data.length,
-							data,
-						});
-					}
-				})
-				.catch((e) => {
-					next(e);
-				});
-		} else {
-			let data: Data[] = handleData(cache.data);
-			data.sort((a, b) => {
-				const c: number = a.score;
-				const d: number = b.score;
-				return d - c;
+				} else {
+					data = data.slice(0, num);
+					res.json({
+						amount: data.length,
+						data,
+					});
+				}
+			})
+			.catch(e => {
+				next(e);
 			});
-			if (data.length < num) {
-				res.json({
-					amount: data.length,
-					data,
-				});
-			} else {
-				data = data.slice(0, num);
-				res.json({
-					amount: data.length,
-					data,
-				});
-			}
+	} else {
+		let data: Data[] = handleData(cache.data);
+		data.sort((a, b) => {
+			const c: number = a.score;
+			const d: number = b.score;
+			return d - c;
+		});
+		if (data.length < num) {
+			res.json({
+				amount: data.length,
+				data,
+			});
+		} else {
+			data = data.slice(0, num);
+			res.json({
+				amount: data.length,
+				data,
+			});
 		}
 	}
-);
+});
 
 const handleData = (data: Document<any, {}>[]) => {
 	const newData: Data[] = [];
