@@ -34,7 +34,7 @@ app.use(
 /**
  * Adding logging and securrity
  */
-app.use(morgan("dev"));
+app.use(morgan("short"));
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
