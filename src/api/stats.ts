@@ -137,7 +137,23 @@ router.get("/calctop/:score", (req: Request, res: Response, next: NextFunction) 
 		next(new TypeError("Score must be a valid number."));
 		return;
 	}
-	let place: number = cache.data.filter(d => d.get("score") >= score).length
+	if (cache.data == null) {
+		stats.find({})
+		.then((DocumentData) => {
+			cache.data = DocumentData
+			cache.lastUpdated = new Date().getTime();
+			const place: number = DocumentData.filter(d => d.get("score") >= score).length
+			res.json({
+				success: 200,
+				place,
+			})
+		})
+		.catch(e => {
+			next(new EvalError("Could not query the database."))
+		})
+		return
+	} 
+	const place: number = cache.data.filter(d => d.get("score") >= score).length
 	res.json({
 		success: 200,
 		place,
