@@ -18,7 +18,7 @@ const cache: CacheInterface = {
 	lastUpdated: null,
 };
 
-const updateTime: number = 5 * 60 * 1000; // every 5 minutes
+const updateTime: number = Number.MAX_VALUE; // no updating needed as this is the only way to insert / update the database. Everything will remain in cache.
 const router: Router = express.Router();
 
 const getIp = (req: Request) => {
@@ -52,9 +52,10 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
 	data.insertedDate = new Date().getTime();
 	data.ipAddress = ip.toString();
 	stats
-		.create(req.body)
+		.create(data)
 		.then(() => {
-			shouldUPdate = true;
+			cache.data = data;
+			cache.lastUpdated = new Date().getTime();
 			res.status(200);
 			res.json({
 				status: "ok",
@@ -71,7 +72,7 @@ router.get("/top/:amount", (req: Request, res: Response, next: NextFunction) => 
 	const { amount } = req.params;
 	const num: number = parseInt(amount, 36);
 	if (isNaN(num)) {
-		next(new TypeError("Id needs to be a valid number."));
+		next(new TypeError("Amount needs to be a valid number."));
 		return;
 	}
 	if (shouldUPdate || cache.lastUpdated == null || new Date().getTime() - cache.lastUpdated > updateTime) {
@@ -122,6 +123,26 @@ router.get("/top/:amount", (req: Request, res: Response, next: NextFunction) => 
 		}
 	}
 });
+
+/**
+ * This can fully run on cache and doesn't need to call the database ever.
+ * 
+ * Update this to update cache if it's outdated. Only do this when the database
+ * is getting updated without the cache being updated.
+ */
+router.get("/top/calcplace", (req: Request, res: Response, next: NextFunction) => {
+	let { score }: any | number = req.params;
+	score = parseInt(score)
+	if (isNaN(score)) {
+		next(new TypeError("Score must be a valid number."));
+		return;
+	}
+	let place: number = cache.data.filter(d => d.get("score") >= score).length
+	res.json({
+		success: 200,
+		place,
+	})
+})
 
 const handleData = (data: Document<any, {}>[]) => {
 	const newData: Data[] = [];
