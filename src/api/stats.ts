@@ -46,11 +46,14 @@ router.get("/", (req: Request, res: Response) => {
 	}
 });
 
-router.post("/", (req: Request, res: Response, next: NextFunction) => {
+router.post("/:name/:score", (req: Request, res: Response, next: NextFunction) => {
 	const ip: string | string[] = getIp(req);
-	const data: any = req.body;
-	data.insertedDate = new Date().getTime();
-	data.ipAddress = ip.toString();
+	const data: any = {
+		username: req.params.name,
+		score: req.params.score,
+		insertedDate: new Date().getTime(),
+		ipAddress: ip.toString(),
+	}
 	stats
 		.create(data)
 		.then(() => {
