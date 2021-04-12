@@ -142,7 +142,7 @@ router.get("/calctop/:score", (req: Request, res: Response, next: NextFunction) 
 		.then((DocumentData) => {
 			cache.data = DocumentData
 			cache.lastUpdated = new Date().getTime();
-			const place: number = DocumentData.filter(d => d.get("score") >= score).length
+			const place: number = DocumentData.filter(d => d.get("score") >= score).length + 1
 			res.json({
 				success: 200,
 				place,
@@ -153,7 +153,7 @@ router.get("/calctop/:score", (req: Request, res: Response, next: NextFunction) 
 		})
 		return
 	} 
-	const place: number = cache.data.filter(d => d.get("score") >= score).length
+	const place: number = cache.data.filter(d => d.get("score") >= score).length + 1
 	res.json({
 		success: 200,
 		place,
