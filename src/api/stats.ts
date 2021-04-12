@@ -130,7 +130,7 @@ router.get("/top/:amount", (req: Request, res: Response, next: NextFunction) => 
  * Update this to update cache if it's outdated. Only do this when the database
  * is getting updated without the cache being updated.
  */
-router.get("/top/calcplace", (req: Request, res: Response, next: NextFunction) => {
+router.get("/calctop/:score", (req: Request, res: Response, next: NextFunction) => {
 	let { score }: any | number = req.params;
 	score = parseInt(score)
 	if (isNaN(score)) {
