@@ -56,8 +56,8 @@ router.post("/:name/:score", (req: Request, res: Response, next: NextFunction) =
 	}
 	stats
 		.create(data)
-		.then(() => {
-			cache.data = data;
+		.then((response) => {
+			Array.isArray(cache.data) ? cache.data.push(response) : cache.data = [response]
 			cache.lastUpdated = new Date().getTime();
 			res.status(200);
 			res.json({
