@@ -61,9 +61,8 @@ router.post("/:name/:score", (req: Request, res: Response, next: NextFunction) =
 			cache.lastUpdated = new Date().getTime();
 			res.status(200);
 			res.json({
-				status: "ok",
-				data: req.body,
-			});
+				success: 200
+			})
 		})
 		.catch(e => {
 			res.status(400);
